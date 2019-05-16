@@ -7,7 +7,7 @@ import { locateElectronPrebuilt } from '../src/electron-locater';
 
 function packageCommand(command: string, packageName: string) {
   return spawnPromise('npm', [command, packageName], {
-    cwd: path.resolve(__dirname, '..'),
+    cwd: path.resolve(__dirname, '..', '..'),
     stdio: 'ignore',
   });
 }
