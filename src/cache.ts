@@ -83,11 +83,17 @@ export const cacheModuleState = async (dir: string, cachePath: string, key: stri
   await fs.writeFile(path.resolve(cachePath, key), zipped);
 };
 
+async function unzip(zippedData: Buffer): Promise<Buffer> {
+  return new Promise(resolve => {
+    zlib.gunzip(zippedData, (_, result) => resolve(result));
+  });
+}
+
 export const lookupModuleState = async (cachePath: string, key: string) => {
   if (await fs.pathExists(path.resolve(cachePath, key))) {
     return async function applyDiff(dir: string) {
       const zipped = await fs.readFile(path.resolve(cachePath, key));
-      const unzipped = await new Promise(resolve => zlib.gunzip(zipped, (_, result) => resolve(result)));
+      const unzipped = await unzip(zipped);
       const diff = unserialize(JSON.parse(unzipped.toString()));
       await writeSnapshot(diff, dir);
     };
